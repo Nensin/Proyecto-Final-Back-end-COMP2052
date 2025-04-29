@@ -1,0 +1,11 @@
+.DS_Store
+
+/todo-api/node_modules/
+
+/Front-end/node_modules/
+
+/todo-api/.env
+
+
+.env
+/Front-end/.env
