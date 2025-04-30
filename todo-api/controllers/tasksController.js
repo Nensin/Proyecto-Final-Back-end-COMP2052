@@ -1,7 +1,7 @@
 const { poolPromise } = require('../db/config');
 const allowedStatuses = ['pendiente', 'en progreso', 'completada'];
 
-const getAllTasks = async (req, res) => { // O const getTasks = ...
+const getAllTasks = async (req, res) => { 
   try {
 
     const pool = await poolPromise;
@@ -26,14 +26,21 @@ const createTask = async (req, res) => {
 
     if (!title) return res.status(400).json({ error: 'El campo "title" es obligatorio.' });
 
+
+    if (!status) {
+      return res.status(400).json({ error: 'El campo "status" es obligatorio.' });
+ }
+ if (!allowedStatuses.includes(status.toLowerCase())) { 
+      return res.status(400).json({ error: `El estado debe ser uno de: ${allowedStatuses.join(', ')}` });
+ }
     const pool = await poolPromise;
     await pool
       .request()
       .input('title', title)
       .input('description', description)
       .input('isCompleted', status === 'completada' ? 1 : 0)
-      .input('statusString', status) 
-      .query('INSERT INTO tasks (title, description, isCompleted, StatusString) VALUES (@title, @description, @isCompleted, @statusString)'); 
+      .input('statusString', status)
+      .query('INSERT INTO tasks (title, description, isCompleted, StatusString) VALUES (@title, @description, @isCompleted, @statusString)');
 
     res.status(201).json({ message: 'Tarea insertada correctamente' });
   } catch (error) {
