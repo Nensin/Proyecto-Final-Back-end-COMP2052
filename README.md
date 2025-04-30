@@ -1,4 +1,4 @@
-# API Gestión de Tareas - COMP 2052 BACK-END
+# Proyecto Final COMP 2025
 
 Descripcion aqui
 
