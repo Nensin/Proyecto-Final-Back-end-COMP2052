@@ -40,4 +40,4 @@ Asegúrate de tener instalado en tu entorno de desarrollo:
 
 ## Ejecución
 
-Para ejecutar el proyecto, necesitas iniciar el back-end y servidor del front-end en terminales separadas.
+Para ejecutar el proyecto, necesitas iniciar el back-end y "serve" en  front-end en terminales separadas.
