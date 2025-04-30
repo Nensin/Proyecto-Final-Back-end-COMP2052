@@ -1,6 +1,6 @@
-# Proyecto Final COMP 2025 - Gestor de Tareas
+# Proyecto Final COMP 2052 - Gestor de Tareas
 
-Este proyecto implementa un sencillo gestor de tareas, compuesto por una API REST desarrollada en Node.js y una interfaz de usuario básica construida con HTML, CSS y JavaScript.
+Este proyecto ejecuta un sencillo gestor de tareas, compuesto por una API REST desarrollada en Node.js y una interfaz de usuario construida con HTML, CSS y JavaScript.
 
 ## Características Principales
 
