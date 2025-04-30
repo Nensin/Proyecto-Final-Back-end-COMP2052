@@ -146,27 +146,54 @@ async function deleteTask(id) {
 
 // Muestra la lista de tareas en el div #task-list
 function displayTasks(tasks) {
-    taskListDiv.innerHTML = ''; // Limpia el contenido actual
+   
 
-    if (tasks.length === 0) {
-        taskListDiv.innerHTML = '<p>No hay tareas.</p>';
+
+    if (!taskListDiv) {
+        console.error('>>> displayTasks: ERROR - No se encontró el elemento #task-list en el HTML.'); 
         return;
     }
 
-    // Crea el HTML para cada tarea y lo añade a la lista
-    tasks.forEach(task => {
-        
+
+    taskListDiv.innerHTML = ''; // Limpia el contenido actual
+
+
+    if (!Array.isArray(tasks) || tasks.length === 0) {
+        taskListDiv.innerHTML = '<p>No hay tareas para mostrar.</p>'; // Mensaje si no hay tareas
+        return;
+    }
+
+
+
+    tasks.forEach((task, index) => {
+
+        // Crear el elemento div para cada tarea
         const taskElement = document.createElement('div');
-        taskElement.classList.add('col-md-6', 'mb-3'); 
+         if (!taskElement) {
+             console.error(`>>> displayTasks: ERROR - No se pudo crear el elemento div para la tarea ${index}.`); 
+             return; 
+         }
 
-        // Usa task.isCompleted para determinar el estado visualmente
-        const statusText = task.isCompleted ? 'Completada' : (task.status || 'Pendiente'); // Usa status si existe, si no, asume Pendiente/Completada
-        const statusColorClass = task.isCompleted ? 'text-success' : 'text-warning'; // Color según estado
 
-        taskElement.innerHTML = `
+        let statusText = task.StatusString || 'Desconocido';
+        let statusColorClass = 'text-secondary';
+
+        if (task.StatusString && task.StatusString.trim().toLowerCase() === 'pendiente') {
+            statusText = 'Pendiente';
+            statusColorClass = 'text-warning';
+        } else if (task.StatusString && task.StatusString.trim().toLowerCase() === 'en progreso') {
+            statusText = 'En progreso';
+            statusColorClass = 'text-info';
+        } else if (task.StatusString && task.StatusString.trim().toLowerCase() === 'completada' || task.isCompleted) {
+            statusText = 'Completada';
+            statusColorClass = 'text-success';
+        }
+
+
+        const taskHTML = `
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">${task.title}</h5>
+                    <h5 class="card-title">${task.title || 'Sin Título'}</h5>
                     <p class="card-text">${task.description || 'Sin descripción'}</p>
                     <p class="card-text"><small class="${statusColorClass}">Estado: ${statusText}</small></p>
 
@@ -176,19 +203,28 @@ function displayTasks(tasks) {
             </div>
         `;
 
-        taskListDiv.appendChild(taskElement);
-    });
-}
+        taskElement.innerHTML = taskHTML;
 
-// Limpia el formulario y lo prepara para crear una nueva tarea
+
+        if (taskElement && taskListDiv) { 
+             taskListDiv.appendChild(taskElement);
+        } else {
+             console.error(`>>> displayTasks: ERROR - No se pudo añadir el elemento de tarea ${index} (taskElement válido: ${!!taskElement}, taskListDiv válido: ${!!taskListDiv}).`); 
+        }
+
+    }); // Fin del forEach
+
+
+
+
+}
 function clearForm() {
     taskForm.reset(); // Resetea todos los campos a sus valores por defecto
-    taskIdInput.value = ''; // Asegura que el campo oculto del ID esté vacío
+    taskIdInput.value = ''; 
    
     cancelButton.style.display = 'inline-block';
 }
 
-// Llena el formulario con los datos de una tarea para editarla
 function populateFormForEdit(task) {
     taskIdInput.value = task.id; // Guarda el ID en el campo oculto
     titleInput.value = task.title;

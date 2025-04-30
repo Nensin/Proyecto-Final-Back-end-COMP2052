@@ -1,20 +1,28 @@
 const { poolPromise } = require('../db/config');
 const allowedStatuses = ['pendiente', 'en progreso', 'completada'];
 
-const getAllTasks = async (req, res) => {
+const getAllTasks = async (req, res) => { // O const getTasks = ...
   try {
+
     const pool = await poolPromise;
-    const result = await pool.request().query('SELECT * FROM tasks');
+
+    // Asegúrate de que la consulta SELECT incluya la nueva columna StatusString (esto ya lo modificaste)
+    const result = await pool.request().query('SELECT id, title, description, isCompleted, createdAt, StatusString FROM tasks');
+    
+
+
+    // Enviar las tareas encontradas
     res.json(result.recordset);
+
+
   } catch (error) {
-    console.error('Error al obtener tareas:', error);
-    res.status(500).json({ error: 'Error al obtener tareas' });
+    res.status(500).json({ error: 'Error interno del servidor al obtener tareas.', details: error.message });
   }
 };
 
 const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, status } = req.body;
 
     if (!title) return res.status(400).json({ error: 'El campo "title" es obligatorio.' });
 
@@ -23,7 +31,9 @@ const createTask = async (req, res) => {
       .request()
       .input('title', title)
       .input('description', description)
-      .query('INSERT INTO tasks (title, description) VALUES (@title, @description)');
+      .input('isCompleted', status === 'completada' ? 1 : 0)
+      .input('statusString', status) 
+      .query('INSERT INTO tasks (title, description, isCompleted, StatusString) VALUES (@title, @description, @isCompleted, @statusString)'); 
 
     res.status(201).json({ message: 'Tarea insertada correctamente' });
   } catch (error) {
@@ -49,8 +59,7 @@ const getTaskById = async (req, res) => {
     const result = await pool
       .request()
       .input('id', parseInt(id)) // Asegurarse de que el ID es un número entero para la consulta
-      .query('SELECT id, title, description, isCompleted, createdAt FROM tasks WHERE id = @id'); 
-
+      .query('SELECT id, title, description, isCompleted, createdAt, StatusString FROM tasks WHERE id = @id');
     // 4. Verificar si se encontró una tarea
     if (result.recordset.length === 0) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
@@ -144,6 +153,9 @@ const updateTask = async (req, res) => {
         const isCompletedBit = (status === 'completada' ? 1 : 0);
         updates.push('isCompleted = @isCompleted'); 
         request.input('isCompleted', isCompletedBit);
+
+        updates.push('StatusString = @statusString'); 
+        request.input('statusString', status); 
         
     }
 
