@@ -34,7 +34,7 @@ Asegúrate de tener instalado en tu entorno de desarrollo:
 
 * Node.js y npm
 * Acceso a una instancia de MS SQL Server.
-* Opcional: Un cliente para administrar SQL Server (SSMS, Azure Data Studio).
+* Un cliente para administrar SQL Server (SSMS, Azure Data Studio, VS code).
 * Opcional: Una herramienta para probar APIs (Postman).
 
 ## Configuración
@@ -77,7 +77,7 @@ La API back-end  expone los siguientes endpoints para la gestión de tareas en l
 
 * **`POST /tasks`**
     * **Descripción:** Crea una nueva tarea.
-    * **Cuerpo de la Solicitud (application/json):** Objeto con `{ "title": "string", "description": "string", "status": "string" }`. `title` es obligatorio. `status` puede ser "pendiente", "en progreso", "completada".
+    * **Cuerpo de la Solicitud (application/json):** Objeto con `{ "title": "string", "description": "string", "status": "string" }`. `title` es obligatorio. `status` puede ser "pendiente", "en progreso" o "completada".
     * **Respuesta (Éxito 201 Created):** Objeto de éxito.
     * **Respuesta (Error 400):** Si falta `title` o `status` inválido 
     * **Respuesta (Error 500):** Objeto con detalles del error.
